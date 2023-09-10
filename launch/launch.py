@@ -15,6 +15,13 @@ def generate_launch_description():
     )
     launch_items.append(display_img_window_arg)
 
+    camera_sync_tolerance_arg = DeclareLaunchArgument(
+        "camera_sync_tolerance",
+        default_value="0.01",
+        description="Maximum time difference (s) allowed when matching images from different cameras to be considered a single frame.",
+    )
+    launch_items.append(camera_sync_tolerance_arg)
+
     camera_calibrations_path_arg = DeclareLaunchArgument(
         "camera_calibrations_path",
         default_value="intrinsics_extrinsics.json",
@@ -76,6 +83,7 @@ def generate_launch_description():
         executable="image_merger",
         parameters=[
             {"display_img_window": LaunchConfiguration("display_img_window")},
+            {"camera_sync_tolerance": LaunchConfiguration("camera_sync_tolerance")},
             {
                 "camera_calibrations_path": LaunchConfiguration(
                     "camera_calibrations_path"

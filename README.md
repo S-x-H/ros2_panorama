@@ -42,17 +42,18 @@ Source setup.
 
 The image_merger node has the following configuration parameters:
 
-| Name                     | Type   | Description                                                                                                                 | Dynamically Reconfigurable? |
-| ------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| display_img_window       | bool   | True to display panorama image being published in window.                                                                   | yes                         |
-| camera_calibrations_path | string | Full filepath to .json containing all camera calibration values. Can be left blank to skip undistortion.                    | no                          |
-| left_camera_name         | string | When doing undistortion: name of left camera in camera calibration json. Can be left blank if calibrations path is blank.   | no                          |
-| centre_camera_name       | string | When doing undistortion: name of centre camera in camera calibration json. Can be left blank if calibrations path is blank. | no                          |
-| right_camera_name        | string | When doing undistortion: name of right camera in camera calibration json. Can be left blank if calibrations path is blank.  | no                          |
-| attempt_stitching        | bool   | True to attempt image stitching instead of mere stacking, will still stack if stitching fails.                              | yes                         |
-| stitching_detector       | string | When doing stitching: 'orb', 'sift', 'brisk', or 'akaze'.                                                                   | yes                         |
-| stitching_threshold      | float  | When doing stitching: feature matching threshold between 0 - 1.                                                             | yes                         |
-| stitching_timeout        | float  | To continue running in real-time, length(s) to attempt stitching per frame before giving up, if stitching is slow.          | yes                         |
+| Name                     | Type   | Description                                                                                                                 | Default | Dynamically Reconfigurable? |
+| ------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------- | ------- | --------------------------- |
+| display_img_window       | bool   | True to display panorama image being published in window.                                                                   | False   | yes                         |
+| camera_sync_tolerance    | bool   | Maximum time difference (s) allowed when matching images from different cameras to be considered a single frame.            | 0.01    | no                          |
+| camera_calibrations_path | string | Full filepath to .json containing all camera calibration values. Can be left blank to skip undistortion.                    | ""      | no                          |
+| left_camera_name         | string | When doing undistortion: name of left camera in camera calibration json. Can be left blank if calibrations path is blank.   | ""      | no                          |
+| centre_camera_name       | string | When doing undistortion: name of centre camera in camera calibration json. Can be left blank if calibrations path is blank. | ""      | no                          |
+| right_camera_name        | string | When doing undistortion: name of right camera in camera calibration json. Can be left blank if calibrations path is blank.  | ""      | no                          |
+| attempt_stitching        | bool   | True to attempt image stitching instead of mere stacking, will still stack if stitching fails.                              | True    | yes                         |
+| stitching_detector       | string | When doing stitching: 'orb', 'sift', 'brisk', or 'akaze'.                                                                   | "orb"   | yes                         |
+| stitching_threshold      | float  | When doing stitching: feature matching threshold between 0 - 1.                                                             | 0.2     | yes                         |
+| stitching_timeout        | float  | To continue running in real-time, length(s) to attempt stitching per frame before giving up, if stitching is slow.          | 0.5     | yes                         |
 
 Note that stitching will perform poorly or fail completely if images have little overlapping area, or a low number of features. Stacking will be performed anyway if stitching fails. It may be desirable to disable stitching if it succeeds but returns incorrect results, or if it repeatedly fails and slows down processing.
 
