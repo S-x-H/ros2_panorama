@@ -18,14 +18,35 @@ def generate_launch_description():
     camera_calibrations_path_arg = DeclareLaunchArgument(
         "camera_calibrations_path",
         default_value="intrinsics_extrinsics.json",
-        description="Full filepath to .json containing all camera calibration values.",
+        description="Full filepath to .json containing all camera calibration values. Can be left blank to skip undistortion.",
     )
     launch_items.append(camera_calibrations_path_arg)
+
+    left_camera_name_arg = DeclareLaunchArgument(
+        "left_camera_name",
+        default_value="camera_3",
+        description="When doing undistortion: name of left camera in camera calibration json.",
+    )
+    launch_items.append(left_camera_name_arg)
+
+    centre_camera_name_arg = DeclareLaunchArgument(
+        "centre_camera_name",
+        default_value="camera_2",
+        description="When doing undistortion: name of centre camera in camera calibration json.",
+    )
+    launch_items.append(centre_camera_name_arg)
+
+    right_camera_name_arg = DeclareLaunchArgument(
+        "right_camera_name",
+        default_value="camera_1",
+        description="When doing undistortion: name of right camera in camera calibration json.",
+    )
+    launch_items.append(right_camera_name_arg)
 
     attempt_stitching_arg = DeclareLaunchArgument(
         "attempt_stitching",
         default_value="False",
-        description="True to do image stitching instead of mere stacking.",
+        description="True to attempt image stitching instead of mere stacking, will still stack if stitching fails.",
     )
     launch_items.append(attempt_stitching_arg)
 
@@ -43,6 +64,13 @@ def generate_launch_description():
     )
     launch_items.append(stitching_threshold_arg)
 
+    stitching_timeout_arg = DeclareLaunchArgument(
+        "stitching_timeout",
+        default_value="0.5",
+        description="To continue running in real-time, length(s) to attempt stitching per frame before giving up, if stitching is slow.",
+    )
+    launch_items.append(stitching_timeout_arg)
+
     image_merger = Node(
         package="ros2_panorama",
         executable="image_merger",
@@ -53,15 +81,19 @@ def generate_launch_description():
                     "camera_calibrations_path"
                 )
             },
+            {"left_camera_name": LaunchConfiguration("left_camera_name")},
+            {"centre_camera_name": LaunchConfiguration("centre_camera_name")},
+            {"right_camera_name": LaunchConfiguration("right_camera_name")},
             {"attempt_stitching": LaunchConfiguration("attempt_stitching")},
             {"stitching_detector": LaunchConfiguration("stitching_detector")},
             {"stitching_threshold": LaunchConfiguration("stitching_threshold")},
+            {"stitching_timeout": LaunchConfiguration("stitching_timeout")},
         ],
         remappings=[
             ("panorama", "cams123/panorama"),
-            ("cam1", "/platypus/camera_1/dec/manual_white_balance"),
-            ("cam2", "/platypus/camera_2/dec/manual_white_balance"),
-            ("cam3", "/platypus/camera_3/dec/manual_white_balance"),
+            ("camera_left", "/platypus/camera_3/dec/manual_white_balance"),
+            ("camera_centre", "/platypus/camera_2/dec/manual_white_balance"),
+            ("camera_right", "/platypus/camera_1/dec/manual_white_balance"),
         ],
     )
     launch_items.append(image_merger)
